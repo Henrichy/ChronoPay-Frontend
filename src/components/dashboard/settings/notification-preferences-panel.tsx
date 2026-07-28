@@ -3,6 +3,7 @@
 import { useId, useState } from "react";
 
 type NotificationChannel = "email" | "push" | "sms";
+type DeliveryMode = "realtime" | "digest";
 
 type PreferenceCategory = {
   id: string;
@@ -52,6 +53,7 @@ function readStoredPreferences() {
     const raw = window.localStorage.getItem(STORAGE_KEY);
     return raw ? (JSON.parse(raw) as {
       categories: PreferenceCategory[];
+      deliveryMode: DeliveryMode;
       quietHoursEnabled: boolean;
       quietHoursStart: string;
       quietHoursEnd: string;
@@ -63,6 +65,9 @@ function readStoredPreferences() {
 
 export function NotificationPreferencesPanel() {
   const storedPreferences = readStoredPreferences();
+  const [deliveryMode, setDeliveryMode] = useState<DeliveryMode>(
+    storedPreferences?.deliveryMode ?? "realtime",
+  );
   const [categories, setCategories] = useState<PreferenceCategory[]>(
     storedPreferences?.categories ?? DEFAULT_CATEGORIES,
   );
@@ -97,6 +102,7 @@ export function NotificationPreferencesPanel() {
 
   const savePreferences = () => {
     const payload = {
+      deliveryMode,
       categories,
       quietHoursEnabled,
       quietHoursStart,
@@ -134,6 +140,97 @@ export function NotificationPreferencesPanel() {
         <p className="text-xs text-slate-400">
           {savedAt ? `Last saved ${savedAt}` : "Changes are stored locally for review"}
         </p>
+      </div>
+
+      {/* Delivery Mode Toggle Section */}
+      <div className="mt-6 rounded-3xl border border-white/10 bg-white/[0.03] p-4">
+        <div className="space-y-4">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+            <div className="space-y-1">
+              <h3 className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-200">
+                Delivery timing
+              </h3>
+              <p className="max-w-xl text-sm leading-6 text-slate-400">
+                Choose when you receive notifications. Real-time sends instantly,
+                daily digest bundles into a summary email each morning.
+              </p>
+            </div>
+            <div className="flex items-center gap-3">
+              <DeliveryModeToggle
+                mode={deliveryMode}
+                onChange={setDeliveryMode}
+              />
+            </div>
+          </div>
+
+          {/* Preview Examples */}
+          <div className="grid gap-4 md:grid-cols-2">
+            <div
+              className={[
+                "rounded-2xl border p-4 transition-all",
+                deliveryMode === "realtime"
+                  ? "border-cyan-300/50 bg-cyan-300/5"
+                  : "border-white/10 bg-white/[0.02]",
+              ].join(" ")}
+              aria-label="Real-time notification example"
+            >
+              <div className="flex items-center gap-2 mb-2">
+                <div className={[
+                  "h-2 w-2 rounded-full",
+                  deliveryMode === "realtime" ? "bg-cyan-300" : "bg-slate-500",
+                ].join(" ")} />
+                <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+                  Real-time
+                </span>
+              </div>
+              <div className="space-y-2">
+                <div className="rounded-lg border border-white/10 bg-slate-950/60 p-2 text-xs">
+                  <div className="flex items-center gap-2">
+                    <div className="h-1.5 w-1.5 rounded-full bg-green-400" />
+                    <span className="text-slate-200">Payment received</span>
+                    <span className="ml-auto text-slate-500">2:14 PM</span>
+                  </div>
+                </div>
+                <div className="rounded-lg border border-white/10 bg-slate-950/60 p-2 text-xs">
+                  <div className="flex items-center gap-2">
+                    <div className="h-1.5 w-1.5 rounded-full bg-blue-400" />
+                    <span className="text-slate-200">Booking confirmed</span>
+                    <span className="ml-auto text-slate-500">1:45 PM</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div
+              className={[
+                "rounded-2xl border p-4 transition-all",
+                deliveryMode === "digest"
+                  ? "border-cyan-300/50 bg-cyan-300/5"
+                  : "border-white/10 bg-white/[0.02]",
+              ].join(" ")}
+              aria-label="Daily digest notification example"
+            >
+              <div className="flex items-center gap-2 mb-2">
+                <div className={[
+                  "h-2 w-2 rounded-full",
+                  deliveryMode === "digest" ? "bg-cyan-300" : "bg-slate-500",
+                ].join(" ")} />
+                <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+                  Daily digest
+                </span>
+              </div>
+              <div className="rounded-lg border border-white/10 bg-slate-950/60 p-2 text-xs">
+                <div className="text-slate-200 font-medium mb-1">Daily summary - 3 updates</div>
+                <div className="space-y-1 text-slate-300">
+                  <div>• Payment received ($1,250)</div>
+                  <div>• Booking confirmed (Sarah M.)</div>
+                  <div>• Review posted (5 stars)</div>
+                </div>
+                <div className="text-slate-500 text-right mt-1">8:00 AM</div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className="mt-6 hidden overflow-hidden rounded-3xl border border-white/10 md:block">
@@ -298,5 +395,50 @@ function SwitchButton({
         ].join(" ")}
       />
     </button>
+  );
+}
+
+function DeliveryModeToggle({
+  mode,
+  onChange,
+}: {
+  mode: DeliveryMode;
+  onChange: (mode: DeliveryMode) => void;
+}) {
+  return (
+    <div 
+      role="radiogroup" 
+      aria-label="Notification delivery timing"
+      className="inline-flex items-center rounded-full border border-white/10 bg-white/5 p-1"
+    >
+      <button
+        type="button"
+        role="radio"
+        aria-checked={mode === "realtime"}
+        onClick={() => onChange("realtime")}
+        className={[
+          "relative min-h-9 px-4 py-2 text-sm font-medium rounded-full transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950",
+          mode === "realtime"
+            ? "bg-white text-slate-950 shadow-sm"
+            : "text-slate-300 hover:text-white",
+        ].join(" ")}
+      >
+        Real-time
+      </button>
+      <button
+        type="button"
+        role="radio"
+        aria-checked={mode === "digest"}
+        onClick={() => onChange("digest")}
+        className={[
+          "relative min-h-9 px-4 py-2 text-sm font-medium rounded-full transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950",
+          mode === "digest"
+            ? "bg-white text-slate-950 shadow-sm"
+            : "text-slate-300 hover:text-white",
+        ].join(" ")}
+      >
+        Daily digest
+      </button>
+    </div>
   );
 }
