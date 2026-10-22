@@ -114,7 +114,7 @@ export function RoleChip() {
   // ── Quick-settings (theme + density) ─────────────────────────────────
   const [currentTheme, setCurrentTheme] = useState<Theme>(() => {
     if (typeof window === "undefined") return "dark";
-    return (localStorage.getItem("chronopay-theme") as Theme) ?? "dark";
+    return "dark";
   });
 
   const [currentDensity, setCurrentDensity] = useState<Density>(() => {
@@ -305,7 +305,7 @@ export function RoleChip() {
                 Theme
               </span>
               <div className="flex gap-1">
-                {(["light", "dark"] as const).map((t) => (
+                {(["dark"] as const).map((t) => (
                   <button
                     key={t}
                     type="button"

@@ -40,6 +40,30 @@ export function Header() {
               >
                 Home
               </Link>
+              <Link
+                href="/dashboard"
+                className="rounded-full px-3 py-2 hover:bg-white/6 hover:text-slate-100 transition duration-200 ease-in-out"
+              >
+                Dashboard
+              </Link>
+              <Link
+                href="/marketplace"
+                className="rounded-full px-3 py-2 hover:bg-white/6 hover:text-slate-100 transition duration-200 ease-in-out"
+              >
+                Marketplace
+              </Link>
+              <Link
+                href="/pricing"
+                className="rounded-full px-3 py-2 hover:bg-white/6 hover:text-slate-100 transition duration-200 ease-in-out"
+              >
+                Pricing
+              </Link>
+              <Link
+                href="/status"
+                className="rounded-full px-3 py-2 hover:bg-white/6 hover:text-slate-100 transition duration-200 ease-in-out"
+              >
+                Status
+              </Link>
               <a
                 href="https://stellar.org"
                 target="_blank"
@@ -47,6 +71,14 @@ export function Header() {
                 className="rounded-full border border-white/10 px-3 py-2 hover:border-white/20 hover:bg-white/6 hover:text-slate-100 transition duration-200 ease-in-out"
               >
                 Stellar
+              </a>
+              <a
+                href="https://github.com/Chronopay-Org/ChronoPay-Frontend"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-full border border-white/10 px-3 py-2 hover:border-white/20 hover:bg-white/6 hover:text-slate-100 transition duration-200 ease-in-out"
+              >
+                GitHub
               </a>
             </div>
           </div>
@@ -110,6 +142,34 @@ export function Header() {
               >
                 Home
               </Link>
+              <Link
+                href="/dashboard"
+                className="block rounded-2xl border border-white/10 bg-zinc-900 px-4 py-3 text-slate-100 hover:bg-white/5"
+                onClick={() => setOpen(false)}
+              >
+                Dashboard
+              </Link>
+              <Link
+                href="/marketplace"
+                className="block rounded-2xl border border-white/10 bg-zinc-900 px-4 py-3 text-slate-100 hover:bg-white/5"
+                onClick={() => setOpen(false)}
+              >
+                Marketplace
+              </Link>
+              <Link
+                href="/pricing"
+                className="block rounded-2xl border border-white/10 bg-zinc-900 px-4 py-3 text-slate-100 hover:bg-white/5"
+                onClick={() => setOpen(false)}
+              >
+                Pricing
+              </Link>
+              <Link
+                href="/status"
+                className="block rounded-2xl border border-white/10 bg-zinc-900 px-4 py-3 text-slate-100 hover:bg-white/5"
+                onClick={() => setOpen(false)}
+              >
+                Status
+              </Link>
               <a
                 href="https://stellar.org"
                 target="_blank"
@@ -118,6 +178,15 @@ export function Header() {
                 onClick={() => setOpen(false)}
               >
                 Stellar
+              </a>
+              <a
+                href="https://github.com/Chronopay-Org/ChronoPay-Frontend"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block rounded-2xl border border-white/10 bg-zinc-900 px-4 py-3 text-slate-100 hover:bg-white/5"
+                onClick={() => setOpen(false)}
+              >
+                GitHub
               </a>
             </div>
 

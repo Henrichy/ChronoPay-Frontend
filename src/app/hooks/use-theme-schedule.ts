@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react';
-import { useTheme } from 'next-themes';
+import { applyTheme } from '@/hooks/use-theme';
 
 export type ScheduleType = 'none' | 'sun' | 'custom';
 
 export function useThemeSchedule() {
-  const { setTheme } = useTheme();
   const [config, setConfig] = useState({
     type: 'none' as ScheduleType,
     lightTime: '06:00',
@@ -13,6 +12,7 @@ export function useThemeSchedule() {
 
   useEffect(() => {
     const saved = localStorage.getItem('theme-schedule');
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (saved) setConfig(JSON.parse(saved));
   }, []);
 
@@ -22,15 +22,15 @@ export function useThemeSchedule() {
     const checkSchedule = () => {
       const now = new Date();
       const currentTime = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
-      
+
       const isDarkTime = currentTime >= config.darkTime || currentTime < config.lightTime;
-      setTheme(isDarkTime ? 'dark' : 'light');
+      applyTheme(isDarkTime ? 'dark' : 'light');
     };
 
     checkSchedule();
     const interval = setInterval(checkSchedule, 60000); // Check every minute
     return () => clearInterval(interval);
-  }, [config, setTheme]);
+  }, [config]);
 
   const updateConfig = (newConfig: Partial<typeof config>) => {
     const next = { ...config, ...newConfig };

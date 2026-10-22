@@ -26,7 +26,7 @@ export default function AdminUsersPage() {
 
   return (
     <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)]">
-      <main id="main-content" className="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 xl:px-8">
+      <main id="main-content" className="mx-auto max-w-[1600px] px-4 py-8 sm:px-6 xl:px-8">
         {/* Page title */}
         <div className="mb-6">
           <h1 className="text-xl font-bold sm:text-2xl text-white">

@@ -21,7 +21,6 @@ const MAX_ITEMS = 10;
 // ─── Component ───────────────────────────────────────────────────────────────────
 
 export function RecentlyViewedRail() {
-  const [items, setItems] = useState<RecentlyViewedItem[]>([]);
   const [showClearConfirm, setShowClearConfirm] = useState(false);
   const [focusedIndex, setFocusedIndex] = useState<number>(-1);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -29,6 +28,7 @@ export function RecentlyViewedRail() {
 
   // Load items from localStorage via lazy initializer
   const [items, setItems] = useState<RecentlyViewedItem[]>(() => {
+    if (typeof window === "undefined") return [];
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
@@ -41,7 +41,6 @@ export function RecentlyViewedRail() {
   });
 
   // Subscribe to external custom events — legitimate side effect pattern.
-  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => {
     const handleUpdate = (e: Event) => {
       const updated = (e as CustomEvent<RecentlyViewedItem[]>).detail;
@@ -53,7 +52,6 @@ export function RecentlyViewedRail() {
   }, []);
 
   // Synchronize React state to localStorage — valid side effect.
-  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
@@ -134,7 +132,13 @@ export function RecentlyViewedRail() {
   );
 
   // Focus the element at focusedIndex
+  const didMountRef = useRef(false);
   useEffect(() => {
+    // Skip the initial mount so the rail does not steal focus or scroll.
+    if (!didMountRef.current) {
+      didMountRef.current = true;
+      return;
+    }
     if (focusedIndex >= 0 && containerRef.current) {
       const buttons = containerRef.current.querySelectorAll<HTMLAnchorElement>(
         "[data-recently-viewed-item]"
@@ -151,6 +155,13 @@ export function RecentlyViewedRail() {
       }
     }
   }, [focusedIndex]);
+
+  // Keep the rail at its start until the user navigates it.
+  useEffect(() => {
+    if (focusedIndex < 0 && containerRef.current) {
+      containerRef.current.scrollLeft = 0;
+    }
+  }, [items, focusedIndex]);
 
   // Don't render if no items
   if (items.length === 0) {
